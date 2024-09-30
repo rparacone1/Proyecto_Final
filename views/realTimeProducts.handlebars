@@ -1,0 +1,31 @@
+<h1>Productos en Tiempo Real</h1>
+<ul id="productList">
+  {{#each products}}
+    <li>
+      <h2>{{this.title}}</h2>
+      <p>Precio: ${{this.price}}</p>
+      <button onclick="addToCart('{{this._id}}')">Agregar al carrito</button>
+    </li>
+  {{/each}}
+</ul>
+
+<form id="addProductForm">
+  <input type="text" id="title" placeholder="Título del producto" required />
+  <input type="number" id="price" placeholder="Precio" required />
+  <button type="submit">Agregar Producto</button>
+</form>
+
+<script src="/socket.io/socket.io.js"></script>
+<script>
+  const socket = io(); socket.on('updateProducts', (products) => { const
+  productList = document.getElementById('productList'); productList.innerHTML =
+  products.map(p => ` <li> <h2>${p.title}</h2> <p>Precio: $${p.price}</p>
+  <button onclick="addToCart('${p._id}')">Agregar al carrito</button> </li>
+  `).join(''); });
+  document.getElementById('addProductForm').addEventListener('submit', (e) => {
+  e.preventDefault(); const title = document.getElementById('title').value;
+  const price = document.getElementById('price').value;
+  socket.emit('addProduct', { title, price: Number(price) }); e.target.reset();
+  }); function addToCart(productId) { // Implementar lógica para agregar al
+  carrito console.log('Agregar al carrito:', productId); }
+</script>
